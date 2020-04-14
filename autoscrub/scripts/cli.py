@@ -23,8 +23,10 @@ import time
 import autoscrub
 import click
 import requests
+from distutils.version import LooseVersion
+from version_check import get_ffmpeg_version
 
-def check_ffmpeg():
+def check_ffmpeg(less_than="4.2"):
     # check ffmpeg exists
     try:
         subprocess.check_output(["ffmpeg", "-L"], stderr=subprocess.STDOUT)
@@ -38,6 +40,23 @@ def check_ffmpeg():
     except (subprocess.CalledProcessError, OSError):
         click.echo("[autoscub:error] Could not find ffprobe executable. Check that ffprobe is in the local folder or your system PATH and that you can run 'ffprobe -L' from the command line.")
         raise click.Abort()
+
+    # check ffmpeg version
+    version = get_ffmpeg_version(strip_prefix=True)
+    if version is None:
+        click.echo(
+            "[autoscrub:warning] Could not determine ffmpeg version. autoscrub requires ffmpeg < {}.".format(
+                less_than
+            )
+        )
+
+    if LooseVersion(version) >= LooseVersion(less_than):
+        click.echo(
+            "[autoscrub:warning] ffmpeg {} found. autoscrub requires ffmpeg < {}.".format(
+                version, less_than
+            )
+        )
+
         
 def check_for_new_autoscrub_version():
     try:
