@@ -24,7 +24,7 @@ import autoscrub
 import click
 import requests
 from distutils.version import LooseVersion
-from version_check import get_ffmpeg_version
+from autoscrub.version_check import get_ffmpeg_version
 
 def check_ffmpeg(less_than="4.2"):
     # check ffmpeg exists
