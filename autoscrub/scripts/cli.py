@@ -26,7 +26,7 @@ import requests
 from distutils.version import LooseVersion
 from autoscrub.version_check import get_ffmpeg_version
 
-def check_ffmpeg(less_than="4.2"):
+def check_ffmpeg(less_than_version=None):
     # check ffmpeg exists
     try:
         subprocess.check_output(["ffmpeg", "-L"], stderr=subprocess.STDOUT)
@@ -42,22 +42,23 @@ def check_ffmpeg(less_than="4.2"):
         raise click.Abort()
 
     # check ffmpeg version
-    version = get_ffmpeg_version(strip_prefix=True)
-    if version is None:
-        click.echo(
-            "[autoscrub:warning] Could not determine ffmpeg version. autoscrub requires ffmpeg < {}.".format(
-                less_than
+    if less_than_version is not None:
+        version = get_ffmpeg_version(strip_prefix=True)
+        if version is None:
+            click.echo(
+                "[autoscrub:warning] Could not determine ffmpeg version. This command requires ffmpeg < {}.".format(
+                    less_than_version
+                )
             )
-        )
 
-    if LooseVersion(version) >= LooseVersion(less_than):
-        click.echo(
-            "[autoscrub:warning] ffmpeg {} found. autoscrub requires ffmpeg < {}.".format(
-                version, less_than
+        if LooseVersion(version) >= LooseVersion(less_than_version):
+            click.echo(
+                "[autoscrub:warning] ffmpeg {} found. This command requires ffmpeg < {}.".format(
+                    version, less_than_version
+                )
             )
-        )
 
-        
+
 def check_for_new_autoscrub_version():
     try:
         r = requests.get('https://pypi.python.org/pypi/autoscrub/json', timeout=0.1)
@@ -247,7 +248,7 @@ def autoprocess(input, output, speed, rescale, target_lufs, target_threshold, pa
         autoscrub.suppress_ffmpeg_output(True)
     
     # check executables exist
-    check_ffmpeg()
+    check_ffmpeg(less_than_version="4.2")
     
     # check autoscrub version
     check_for_new_autoscrub_version()
@@ -515,7 +516,7 @@ def use_filtergraph(input, output, show_ffmpeg_output, suppress_prompts):
         autoscrub.suppress_ffmpeg_output(True)
     
     # check executables exist
-    check_ffmpeg()
+    check_ffmpeg(less_than_version="4.2")
     
     # check autoscrub version
     check_for_new_autoscrub_version()
