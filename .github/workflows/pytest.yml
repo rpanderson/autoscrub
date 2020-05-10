@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: [2.7, 3.8]
     steps:
       - name: Checkout
@@ -31,7 +31,10 @@ jobs:
       - name: Install FFmpeg (Windows)
         if: startsWith(matrix.os, 'windows')
         run: choco install ffmpeg
+      - name: Install FFmpeg (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: brew install ffmpeg
       - name: Test with pytest
         run: |
-          pip install pytest
+          pip install pytest pytest-timeout
           pytest
