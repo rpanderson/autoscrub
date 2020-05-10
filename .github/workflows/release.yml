@@ -4,6 +4,7 @@ on: push
 jobs:
   test:
     name: Deploy release to PyPI
+    if: github.repository == 'philipstarkey/autoscrub'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
