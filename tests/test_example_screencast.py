@@ -20,7 +20,7 @@ VALID_LOUDNESS = {
     "LRA high": -16.2,
 }
 
-os.chdir(Path(__file__).parent.absolute())
+os.chdir(str(Path(__file__).parent.absolute()))
 
 
 def test_autoprocess(input=TEST_VIDEO_INPUT, filtergraph=VALID_FILTERGRAPH):
@@ -44,7 +44,7 @@ def test_autoprocess(input=TEST_VIDEO_INPUT, filtergraph=VALID_FILTERGRAPH):
 
     # Check filtergraph
     tmp = Path(stdout[-1].decode("utf8").split("at:")[-1].strip())
-    assert filecmp.cmp(VALID_FILTERGRAPH, tmp)
+    assert filecmp.cmp(VALID_FILTERGRAPH, str(tmp))
 
 
 def test_duration():
