@@ -103,6 +103,7 @@ setup(
         'six',
         'requests',
         'subprocess32;python_version<"3.2"',
+        'pathlib2;python_version<"3"'
     ],
     entry_points='''
         [console_scripts]

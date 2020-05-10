@@ -1,7 +1,12 @@
 import os
 import filecmp
+import six
 import autoscrub
-from pathlib import Path
+if six.PY3:
+    from pathlib import Path
+else:
+    # backported pathlib module
+    from pathlib2 import Path
 
 TEST_VIDEO_INPUT = "example_screencast.mp4"
 TEST_VIDEO_OUTPUT = "example_screencast_scrub.mp4"
