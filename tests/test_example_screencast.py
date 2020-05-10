@@ -2,6 +2,7 @@ import os
 import filecmp
 import six
 import autoscrub
+
 if six.PY3:
     from pathlib import Path
 else:
@@ -20,7 +21,22 @@ VALID_LOUDNESS = {
     "LRA high": -16.2,
 }
 
+
 os.chdir(str(Path(__file__).parent.absolute()))
+
+
+def cmp_lines(path_1, path_2):
+    """Check file equality using universal line endings.
+       See: https://stackoverflow.com/a/23038606
+    """
+    l1 = l2 = True
+    with open(path_1, "r") as f1, open(path_2, "r") as f2:
+        while l1 and l2:
+            l1 = f1.readline()
+            l2 = f2.readline()
+            if l1 != l2:
+                return False
+    return True
 
 
 def test_autoprocess(input=TEST_VIDEO_INPUT, filtergraph=VALID_FILTERGRAPH):
@@ -44,7 +60,7 @@ def test_autoprocess(input=TEST_VIDEO_INPUT, filtergraph=VALID_FILTERGRAPH):
 
     # Check filtergraph
     tmp = Path(stdout[-1].decode("utf8").split("at:")[-1].strip())
-    assert filecmp.cmp(VALID_FILTERGRAPH, str(tmp))
+    assert cmp_lines(VALID_FILTERGRAPH, str(tmp))
 
 
 def test_duration():
