@@ -5,9 +5,10 @@ on: [push]
 jobs:
   test:
     name: Run tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest]
         python-version: [2.7, 3.8]
     steps:
       - name: Checkout
@@ -21,11 +22,15 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           pip install -e .
           # pip install -r requirements.txt
-      - name: Install FFmpeg
+      - name: Install FFmpeg (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo add-apt-repository ppa:jonathonf/ffmpeg-4
           sudo apt-get update
           sudo apt-get install ffmpeg
+      - name: Install FFmpeg (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: choco install ffmpeg
       - name: Test with pytest
         run: |
           pip install pytest
